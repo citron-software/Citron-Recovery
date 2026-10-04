@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citron Recovery - Advanced Custom Recovery</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        orangefox: {
+                            50: '#fff7ed',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            500: '#ff6600',
+                            primary: '#ff6600',
+                            dark: '#0a0a0c',
+                            card: 'rgba(20, 20, 25, 0.65)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070709;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Liquid Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(20, 20, 28, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-panel-hover:hover {
+            background: rgba(30, 30, 42, 0.7);
+            border-color: rgba(255, 102, 0, 0.3);
+            box-shadow: 0 12px 40px 0 rgba(255, 102, 0, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-button {
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.9) 0%, rgba(200, 70, 0, 0.9) 100%);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-button:hover {
+            background: linear-gradient(135deg, rgba(255, 120, 20, 1) 0%, rgba(220, 80, 0, 1) 100%);
+            box-shadow: 0 6px 25px rgba(255, 102, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Glowing background blobs */
+        .glow-blob {
+            position: absolute;
+            filter: blur(90px);
+            z-index: -1;
+            opacity: 0.25;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070709;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 102, 0, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 102, 0, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-orange-500 selection:text-white">
+
+    <div class="glow-blob bg-orange-600 w-96 h-96 top-[-10%] left-[-10%] animate-pulse"></div>
+    <div class="glow-blob bg-amber-600 w-[500px] h-[500px] top-[40%] right-[-15%]"></div>
+    <div class="glow-blob bg-orange-500 w-80 h-80 bottom-[10%] left-[20%]"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 py-4">
+        <nav class="max-w-7xl mx-auto glass-panel rounded-2xl px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30 text-white font-bold text-xl">
+                    <i class="fa-solid fa-lemon"></i>
+                </div>
+                <span class="font-bold text-xl tracking-wide bg-gradient-to-r from-white via-gray-200 to-orange-400 bg-clip-text text-transparent">
+                    Citron Recovery
+                </span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
+                <a href="#overview" class="hover:text-orange-500 transition-colors">Overview</a>
+                <a href="#features" class="hover:text-orange-500 transition-colors">Features</a>
+                <a href="#downloads" class="hover:text-orange-500 transition-colors">Downloads</a>
+                <a href="https://github.com/citron-software" target="_blank" class="hover:text-orange-500 transition-colors flex items-center gap-1.5">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a href="#downloads" class="glass-button px-5 py-2.5 rounded-xl font-semibold text-sm text-white flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Get Recovery
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="relative pt-36 pb-20 md:pt-48 md:pb-32 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-orange-400 text-xs sm:text-sm font-semibold mb-6 border border-orange-500/30 shadow-inner">
+            <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+            OrangeFox Recovery Based • Liquid Glass Edition
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight max-w-4xl leading-tight mb-6">
+            The Ultimate Custom Recovery Experience for <span class="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 bg-clip-text text-transparent">Android</span>
+        </h1>
+
+        <p class="text-gray-400 text-base sm:text-lg md:text-xl max-w-2xl mb-10 font-normal">
+            Designed with precision, built for performance. Citron Recovery brings stunning liquid glass aesthetics, advanced flashing tools, and rock-solid reliability to your device.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <a href="#downloads" class="glass-button w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-base text-white flex items-center justify-center gap-3">
+                <i class="fa-solid fa-cloud-arrow-down text-lg"></i> Download Recovery
+            </a>
+            <a href="https://github.com/citron-software" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-panel glass-panel-hover font-semibold text-base text-gray-200 flex items-center justify-center gap-3">
+                <i class="fa-brands fa-github text-lg"><span>citron-software</span></i>
+            </a>
+        </div>
+
+        <!-- Recovery UI Mockup Showcase -->
+        <div class="mt-16 w-full max-w-4xl glass-panel rounded-3xl p-4 sm:p-6 border border-white/10 relative shadow-2xl overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#070709] via-transparent to-transparent opacity-60 z-10 pointer-events-none"></div>
+            <div class="flex items-center justify-between mb-4 px-2">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+                <div class="text-xs text-gray-400 font-mono">Citron Recovery v3.2-Stable</div>
+                <div class="text-xs text-orange-400 font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-battery-three-quarters"></i> 98%
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                <div class="glass-panel p-5 rounded-2xl border-orange-500/20 bg-orange-500/5">
+                    <div class="text-orange-400 text-sm font-semibold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive"></i> Install Package
+                    </div>
+                    <p class="text-xs text-gray-400">Flash zip, images, Magisk, and custom kernels with signature verification options.</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-white/10">
+                    <div class="text-gray-200 text-sm font-semibold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-hard-drive"></i> Backup & Restore
+                    </div>
+                    <p class="text-xs text-gray-400">Full Nandroid backups including vendor, super, boot, and data partitions.</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-white/10">
+                    <div class="text-gray-200 text-sm font-semibold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> Partition Tools
+                    </div>
+                    <p class="text-xs text-gray-400">Advanced partition manager, format data (encryption fix), and file manager.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="overview" class="py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Crafted for Enthusiasts</h2>
+            <p class="text-gray-400 text-sm sm:text-base">Citron Recovery merges the robust codebase and customizability of OrangeFox with a breath-taking modern liquid glass interface.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-panel p-8 rounded-3xl glass-panel-hover transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 text-2xl mb-6">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Lightning Fast</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Optimized recovery kernel and streamlined interface menus ensure snappy touch response and speedy flashing operations.</p>
+            </div>
+
+            <div class="glass-panel p-8 rounded-3xl glass-panel-hover transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 text-2xl mb-6">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Enhanced Security</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Built-in password protection, automated decryption support for modern Android file-based encryption (FBE), and secure backups.</p>
+            </div>
+
+            <div class="glass-panel p-8 rounded-3xl glass-panel-hover transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 text-2xl mb-6">
+                    <i class="fa-solid fa-paintbrush"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-white">Liquid Glass Theme</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Inspired by futuristic UI designs with translucent frosted glass panels, vibrant orange highlights, and gorgeous dark styling.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div class="glass-panel rounded-3xl p-8 sm:p-12 relative overflow-hidden border border-white/10">
+            <div class="absolute right-0 top-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="max-w-xl mb-12">
+                <span class="text-orange-400 font-semibold text-xs tracking-widest uppercase mb-2 block">Power Packed</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Advanced Recovery Features</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-panel p-6 rounded-2xl border-white/5">
+                    <i class="fa-solid fa-rotate text-orange-400 text-xl mb-4"></i>
+                    <h4 class="font-bold text-white mb-2">OTA Updates</h4>
+                    <p class="text-xs text-gray-400">Seamless support for maintaining recovery after flashing official or custom ROM updates.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-white/5">
+                    <i class="fa-solid fa-file-code text-orange-400 text-xl mb-4"></i>
+                    <h4 class="font-bold text-white mb-2">Built-in Magisk</h4>
+                    <p class="text-xs text-gray-400">Option to auto-inject root binaries or manage modules right from the recovery menu.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-white/5">
+                    <i class="fa-solid fa-terminal text-orange-400 text-xl mb-4"></i>
+                    <h4 class="font-bold text-white mb-2">ADB & Fastboot</h4>
+                    <p class="text-xs text-gray-400">Full ADB sideloading and command-line support for advanced device troubleshooting.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border-white/5">
+                    <i class="fa-solid fa-microchip text-orange-400 text-xl mb-4"></i>
+                    <h4 class="font-bold text-white mb-2">Wide Device Support</h4>
+                    <p class="text-xs text-gray-400">Engineered to support a wide selection of popular smartphones with modern partitions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="downloads" class="py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Download Citron Recovery</h2>
+            <p class="text-gray-400 text-sm sm:text-base">Choose your build version or visit our GitHub organization repository for the latest source code and releases.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Stable Release Card -->
+            <div class="glass-panel p-8 rounded-3xl border-orange-500/30 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 font-bold text-xs">STABLE</span>
+                        <span class="text-gray-400 text-xs">v3.2.0</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Citron Recovery Stable</h3>
+                    <p class="text-gray-400 text-sm mb-6">Thoroughly tested builds ready for daily driver devices. Maximum stability and full feature set.</p>
+                    <ul class="space-y-2 text-xs text-gray-300 mb-8">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i> Decryption fix for Android 13/14</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i> Liquid Glass UI theme applied</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-orange-400"></i> Optimized touch drivers</li>
+                    </ul>
+                </div>
+                <a href="https://github.com/citron-software" target="_blank" class="glass-button w-full py-3.5 rounded-xl font-bold text-center text-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Download Stable Build
+                </a>
+            </div>
+
+            <!-- GitHub Source / Nightly Card -->
+            <div class="glass-panel p-8 rounded-3xl border-white/10 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs">GITHUB HUB</span>
+                        <span class="text-gray-400 text-xs">citron-software</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Source & Repositories</h3>
+                    <p class="text-gray-400 text-sm mb-6">Access all device trees, kernel sources, and nightly updates directly on our GitHub profile.</p>
+                    <ul class="space-y-2 text-xs text-gray-300 mb-8">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400"></i> Open source device trees</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400"></i> Contribute to development</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-400"></i> Issue tracker & support</li>
+                    </ul>
+                </div>
+                <a href="https://github.com/citron-software" target="_blank" class="w-full py-3.5 rounded-xl glass-panel glass-panel-hover font-bold text-center text-white flex items-center justify-center gap-2 border border-white/20">
+                    <i class="fa-brands fa-github text-lg"></i> Visit citron-software
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-20 border-t border-white/10 bg-[#040405] py-12 px-4 sm:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-lemon text-sm"></i>
+                </div>
+                <span class="font-bold text-lg text-white">Citron Recovery</span>
+            </div>
+
+            <p class="text-xs text-gray-500">
+                Inspired by OrangeFox Recovery. Built with Liquid Glass design. Not affiliated with OrangeFox official team directly.
+            </p>
+
+            <div class="flex items-center space-x-6 text-gray-400 text-sm">
+                <a href="https://github.com/citron-software" target="_blank" class="hover:text-orange-500 transition-colors">
+                    <i class="fa-brands fa-github text-xl"></i>
+                </a>
+                <a href="#overview" class="hover:text-orange-500 transition-colors">Overview</a>
+                <a href="#features" class="hover:text-orange-500 transition-colors">Features</a>
+                <a href="#downloads" class="hover:text-orange-500 transition-colors">Downloads</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
